@@ -4,14 +4,18 @@ import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 import '../models/noticia_model.dart';
 import '../services/generic_service.dart';
+import 'api.dart';
 
-class BlogApi {
+class BlogApi extends Api {
   final GenericService<NoticiaModel> _noticiaService;
 
-  BlogApi(
-    this._noticiaService,
-  );
-  Handler get handler {
+  BlogApi(this._noticiaService);
+
+  @override
+  Handler getHandler({
+    List<Middleware>? middlewares,
+    bool isSecurityRequired = false,
+  }) {
     final Router router = Router();
 
     //Listagem
@@ -46,8 +50,6 @@ class BlogApi {
       '/api/v1/blog/noticias',
       (Request req) {
         String? id = req.url.queryParameters['id'];
-
-        // _noticiaService.save('');
         return Response.ok('Atualizado');
       },
     );
@@ -62,6 +64,10 @@ class BlogApi {
       },
     );
 
-    return router;
+    return createHandler(
+      router: router,
+      isSecurityRequired: isSecurityRequired,
+      middlewares: middlewares,
+    );
   }
 }
